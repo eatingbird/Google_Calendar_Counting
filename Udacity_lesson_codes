@@ -1,0 +1,944 @@
+def factorial(n):
+          if n==0:
+               return 1 # base case
+          else:
+                return n*factorial(n-1)
+
+# Define a procedure is_palindrome, that takes as input a string, and returns a
+# Boolean indicating if the input string is a palindrome.
+
+# Base Case: '' => True
+# Recursive Case: if first and last characters don't match => False
+# if they do match, is the middle a palindrome?
+
+def is_palindrome(s):
+    if s == '':
+        return True
+    else:
+        if s[0] == s[-1]:
+            return is_palindrome(s[1:-1])
+        else:
+            return False
+ 
+print is_palindrome('')
+#>>> True
+print is_palindrome('abab')
+#>>> False
+print is_palindrome('abba')
+#>>> True
+
+def iter_palindrome(s):
+      for i in range(0, len(s) /2);
+            if s[i] != s[-(i+1)]:
+                   return False
+      return True
+
+# Define a procedure, fibonacci, that takes a natural number as its input, and
+# returns the value of that fibonacci number.
+# Two Base Cases:    fibonacci(0) => 0,   fibonacci(1) => 1
+# Recursive Case:    n > 1 : fibonacci(n) => fibonacci(n-1) + fibonacci(n-2)
+
+def fibonacci(n):
+    if n ==0:
+        return 0
+    if n ==1:
+        return 1
+    if n>1:
+        return fibonacci(n-1)+fibonacci(n-2)
+
+print fibonacci(0)
+#>>> 0
+print fibonacci(1)
+#>>> 1
+print fibonacci(15)
+#>>> 610
+
+
+# above calculation is expensive because the calculation is multiples of recursive calculations
+# of calls for each fibonacci is backward same as the actual fibo nuber
+# fibo(36) -> # of calls for fibo(36) & (35) are 1s
+# number of calls fibo(x) = fibo(36-n-1)
+# use while loop if it is inefficient to use recursive calculation
+#Define a faster fibonacci procedure that will enable us to computer
+#fibonacci(36).
+
+def fibonacci(n):
+    a = 0
+    b = 1
+    c = a+b
+    cnt=2
+    while cnt < n+1:
+        c=a+b
+        a = b
+        b = c
+        cnt+=1
+    return c
+
+print fibonacci(36)
+#>>> 14930352
+
+def fibonacci(n):
+	currnet = 0
+             after = 1
+             for i in range(0, n):
+                       current, after = after, current+afte
+ # when multiple var are changing constantly affecting each other, use multiple assignment
+             return current        
+
+#the directed graph can be inserted by the following changes
+
+def crawl_web(seed): # returns index, graph of outlinks
+    tocrawl = [seed]
+    crawled = []
+    graph = {}  # <url>:[list of pages it links to]
+    index = {} 
+    while tocrawl: 
+        page = tocrawl.pop()
+        if page not in crawled:
+            content = get_page(page)
+            add_page_to_index(index, page, content)
+            outlinks = get_all_links(content)
+            graph[page] = outlinks
+            union(tocrawl, outlinks)
+            crawled.append(page)
+    return index, graph
+
+
+
+
+
+rank(0, url) = 1/numbe of pages
+rank(t,url) = (1-d)/npages + per links to url d*rank(t-1,p) / number of outlinks from p
+#while damping constant d = 0.8 , #
+variable ranks will keep track of ranks at time t-1, and newranks for ranks at itme t
+
+rank(page, 0) = 1/npages
+rank(page, t) = (1-d)/npages  + sum (d * rank(p, t - 1) / number of outlinks from p) 
+# over all pages p that link to this page
+
+def compute_ranks(graph):
+    d = 0.8 # damping factor
+    numloops = 10
+    
+    ranks = {}
+    npages = len(graph)
+    for page in graph:
+        ranks[page] = 1.0/npages
+    
+     for i in range(0, numloops):
+          newrank ={}
+          for page in graph:
+              newrank = (1-d)/npages
+              for node in graph:
+                     if page in graph[node]:
+                           newrank = newrank + d* (ranks[node]/len(graph[node])
+              newranks[page] = newrank
+           ranks = newranks
+      return ranks
+
+
+# Rabbits Multiplying
+
+# A (slightly) more realistic model of rabbit multiplication than the Fibonacci
+# model, would assume that rabbits eventually die. For this question, some
+# rabbits die from month 6 onwards.
+#
+# Thus, we can model the number of rabbits as:
+#
+# rabbits(1) = 1 # There is one pair of immature rabbits in Month 1
+# rabbits(2) = 1 # There is one pair of mature rabbits in Month 2
+#
+# For months 3-5:
+# Same as Fibonacci model, no rabbits dying yet
+# rabbits(n) = rabbits(n - 1) + rabbits(n - 2)
+#
+#
+# For months > 5:
+# All the rabbits that are over 5 months old die along with a few others
+# so that the number that die is equal to the number alive 5 months ago.
+# Before dying, the bunnies reproduce.
+# rabbits(n) = rabbits(n - 1) + rabbits(n - 2) - rabbits(n - 5)
+#
+# This produces the rabbit sequence: 1, 1, 2, 3, 5, 7, 11, 16, 24, 35, 52, ...
+#
+# Define a procedure rabbits that takes as input a number n, and returns a
+# number that is the value of the nth number in the rabbit sequence.
+# For example, rabbits(10) -> 35. (It is okay if your procedure takes too
+#                                long to run on inputs above 30.)
+
+def rabbits(n):
+    cnt = 0
+    current = 0
+    result = 0
+    rab = [1]
+    while cnt < n:
+        if cnt >=4:
+            current = current + rab[cnt-1] - rab[cnt-4]
+        else:
+            current = current + rab[cnt-1]
+        rab.append(current)
+        cnt+=1
+    result = rab[cnt-1]
+    return result
+
+print rabbits(10)
+#>>> 35
+
+#s = ""
+#for i in range(1,12):
+#    s = s + str(rabbits(i)) + " "
+#print s
+#>>> 1 1 2 3 5 7 11 16 24 35 52
+
+#Class solution code suggest the dead rab before the 5th to be 0, where as I just go do a dif formula. Make it "base case" (hit 0) 
+
+def rabbits(n):
+    if n<1:
+       return 0
+    else:
+         if n ==1 or n ==2: # base case defined in problem statemtne
+             return 1
+        else:
+             return rabbits(n-1) + rabbits(n-2) - rabbits(n-5)    
+
+
+
+#Define a procedure, hexes_to_udaciousness(n, spread,
+# target), that takes three inputs: the starting number of Udacians, the spread
+# rate (how many new friends each Udacian convinces to join each hexamester),
+# and the target number, and outputs the number of hexamesters needed to reach 
+# (or exceed) the target.
+
+# For credit, your procedure must not use: while, for, or import math. 
+
+#
+def hexes_to_udaciousness(n, spread, target):
+    cnt = 0
+    while n < target:
+        n = n + n*spread
+        cnt+=1
+    return cnt
+
+# If I don't use while loop
+
+
+def hexes_to_udaciousness(n, spread, target):
+    udacians = n
+    if n>=target:
+        return 0
+    for i in range(0,target/n):
+        if udacians < target:
+            udacians = udacians + udacians*spread
+        else:
+            return i
+
+
+def hexes_to_udaciousness(n, spread, target):
+    if target<=n:
+        return 0
+    else:
+        return 1+hexes_to_udaciousness(n+n*spread, spread, target)
+
+
+
+
+
+# Deep Count 
+# The built-in len operator outputs the number of top-level elements in a List,
+# but not the total number of elements. For this question, your goal is to count
+# the total number of elements in a list, including all of the inner lists.
+# Define a procedure, deep_count, that takes as input a list, and outputs the
+# total number of elements in the list, including all elements in lists that it
+# contains.
+# For this procedure, you will need a way to test if a value is a list. We have
+# provided a procedure, is_list(p) that does this:def is_list(p): return isinstance(p, list)
+# It is not necessary to understand how is_list works. It returns True if the
+# input is a List, and returns False otherwise.
+
+
+def deep_count(p):
+    if len(p)==0:
+        return 0
+    else:
+        a = p.pop()
+        if is_list(a):
+            return 1+len(p) + deep_count(a)
+        else:
+            return 1+len(p)
+
+
+
+
+
+
+def deep_count(p):
+    sum = 0
+    for e in p:
+        sum = sum +1
+        if is_list(e):
+              sum = sum + deep_count(e)
+       return sum
+
+
+
+
+
+#Feeling Lucky
+ 
+#In Unit 6, we implemented a page ranking algorithm, but didn't finish the final
+#step of using it to improve our search results. For this question, you will use
+#the page rankings to produce the best output for a given query.
+
+#Define a procedure, lucky_search, that takes as input an index, a ranks
+#dictionary (the result of compute_ranks), and a keyword, and returns the one
+#URL most likely to be the best site for that keyword. If the keyword does not
+#appear in the index, lucky_search should return None.
+
+
+def lucky_search(index, ranks, keyword):
+    if keyword not in index:
+        return None
+    else:
+        n=0
+        larger=0
+        large_url=""
+        while n < len(index[keyword]):
+            if ranks[index[keyword][n]]>= larger:
+                larger = ranks[index[keyword][n]]
+                large_url= index[keyword][n]
+            n=n+1
+        return large_url
+
+
+
+
+
+def lucky_search(index, ranks, keyword):
+    pages = lookup(index, keyword)
+    if not pages:
+           return None
+    best_page = page[0]
+    for candidate in pages:
+          if ranks[candidate] > ranks[best_page]:
+                 best_page = candidate
+    return best_page
+
+# when you can use for instead of while, use for to save lines
+
+
+
+
+
+#########################################################################
+#                 10-row School abacus
+#                         by
+#                      Michael H
+#########################################################################
+#       Description partially extracted from from wikipedia 
+#
+#  Around the world, abaci have been used in pre-schools and elementary
+#
+# In Western countries, a bead frame similar to the Russian abacus but
+# with straight wires and a vertical frame has been common (see image).
+# Helps schools as an aid in teaching the numeral system and arithmetic
+#
+#         |00000*****   |     row factor 1000000000
+#         |00000*****   |     row factor 100000000
+#         |00000*****   |     row factor 10000000 
+#         |00000*****   |     row factor 1000000
+#         |00000*****   |     row factor 100000
+#         |00000*****   |     row factor 10000
+#         |00000*****   |     row factor 1000
+#         |00000****   *|     row factor 100     * 1
+#         |00000***   **|     row factor 10      * 2
+#         |00000**   ***|     row factor 1       * 3
+#                                        -----------    
+#                             Sum                123 
+#
+# Each row represents a different row factor, starting with x1 at the
+# bottom, ascending up to x1000000000 at the top row.     
+######################################################################
+#                 10-row School abacus
+#                         by
+#                      Michael H
+#########################################################################
+#       Description partially extracted from from wikipedia 
+#
+#  Around the world, abaci have been used in pre-schools and elementary
+#
+# In Western countries, a bead frame similar to the Russian abacus but
+# with straight wires and a vertical frame has been common (see image).
+# Helps schools as an aid in teaching the numeral system and arithmetic
+#         |00000****   *|     row factor 100     * 1
+#         |00000***   **|     row factor 10      * 2
+#         |00000**   ***|     row factor 1       * 3
+# TASK:
+# Define a procedure print_abacus(integer) that takes a positive integer
+# and prints a visual representation (image) of an abacus setup for a 
+# given positive integer value.
+# 
+# Ranking
+# 1 STAR: solved the problem!
+# 2 STARS: 6 < lines <= 9
+# 3 STARS: 3 < lines <= 6
+# 4 STARS: 0 < lines <= 3
+
+def print_abacus(value):
+    a, n, lis="|00000*****|", 1, []
+    while n<=10:
+        if value !=0:
+            while n<=len(str(value)):
+                lis.append(a[:10-int(str(value%10**n)[0])]+"   "+a[10-int(str(value%10**n)[0])+1:])
+                n+=1
+        lis.append(a[:10]+"   |")
+        n+=1
+    for p in lis[::-1]: print p 
+
+
+
+
+def triangular(n):
+    cnt, defa = 0,0
+    while cnt <n:
+        defa = defa + cnt +1
+        cnt+=1
+    return defa
+
+
+def triangular(n):
+    number = 0
+    for i in range(1, n+1):
+        number = number + i
+    return number
+
+#using for loop instead of while lets the code to be a bit shorter in this case
+
+
+
+
+# Write a procedure date_converter which takes two inputs. The first is 
+# a dictionary and the second a string. The string is a valid date in 
+# the format month/day/year. The procedure should return
+# the date written in the form <day> <name of month> <year>.
+# For example , if the
+# dictionary is in English,
+english = {1:"January", 2:"February", 3:"March", 4:"April", 5:"May", 
+6:"June", 7:"July", 8:"August", 9:"September",10:"October", 
+11:"November", 12:"December"}
+# then  "5/11/2012" should be converted to "11 May 2012". 
+# If the dictionary is in Swedish
+swedish = {1:"januari", 2:"februari", 3:"mars", 4:"april", 5:"maj", 
+6:"juni", 7:"juli", 8:"augusti", 9:"september",10:"oktober", 
+11:"november", 12:"december"}
+# then "5/11/2012" should be converted to "11 maj 2012".
+# Hint: int('12') converts the string '12' to the integer 12.
+
+#<My code>
+
+def date_converter(dictionary, date):
+    month = int(date.split('/')[0])
+    day = date.split('/')[1]
+    year = date.split('/')[2]
+    return day+" "+dictionary[month]+" "+year
+
+print date_converter(english, '5/11/2012')
+#>>> 11 May 2012
+
+#<Class code>
+def date_converter(language, date):
+    first= date.find('/')
+    month = date[:first]
+    second = date.find('/', first+1)
+    day = date[first +1:second]
+    year = date[second +1:]
+    return day +" " + language[int(month)] +" " + year
+
+#<Class code2>
+    month, day, year = date.split('/')
+    return day +" " + language[int(month)] +" " + year
+
+
+
+
+
+# Family Trees
+
+# In the lecture, we showed a recursive definition for your ancestors. For this
+# question, your goal is to define a procedure that finds someone's ancestors,
+# given a Dictionary that provides the parent relationships.
+
+# Here's an example of an input Dictionary:
+
+ada_family = { 'Judith Blunt-Lytton': ['Anne Isabella Blunt', 'Wilfrid Scawen Blunt'],
+              'Ada King-Milbanke': ['Ralph King-Milbanke', 'Fanny Heriot'],
+              'Ralph King-Milbanke': ['Augusta Ada King', 'William King-Noel'],
+              'Anne Isabella Blunt': ['Augusta Ada King', 'William King-Noel'],
+              'Byron King-Noel': ['Augusta Ada King', 'William King-Noel'],
+              'Augusta Ada King': ['Anne Isabella Milbanke', 'George Gordon Byron'],
+              'George Gordon Byron': ['Catherine Gordon', 'Captain John Byron'],
+              'John Byron': ['Vice-Admiral John Byron', 'Sophia Trevannion'] }
+
+# Define a procedure, ancestors(genealogy, person), that takes as its first input
+# a Dictionary in the form given above, and as its second input the name of a
+# person. It should return a list giving all the known ancestors of the input
+# person (this should be the empty list if there are none). The order of the list
+# does not matter and duplicates will be ignored.
+
+def ancestors(genealogy, person):
+    if person in genealogy:
+        parents = genealogy[person]
+        result = parents
+        for grands in genealogy[person]:
+            result = result + ancestors(genealogy, grands)
+        return result
+    else:
+        return []
+
+# Here are some examples:
+
+print ancestors(ada_family, 'Augusta Ada King')
+#>>> ['Anne Isabella Milbanke', 'George Gordon Byron',
+#    'Catherine Gordon','Captain John Byron']
+
+print ancestors(ada_family, 'Judith Blunt-Lytton')
+#>>> ['Anne Isabella Blunt', 'Wilfrid Scawen Blunt', 'Augusta Ada King',
+#    'William King-Noel', 'Anne Isabella Milbanke', 'George Gordon Byron',
+#    'Catherine Gordon', 'Captain John Byron']
+
+print ancestors(ada_family, 'Dave')
+#>>> []
+
+
+# Double Gold Star
+
+# Khayyam Triangle
+
+# The French mathematician, Blaise Pascal, who built a mechanical computer in
+# the 17th century, studied a pattern of numbers now commonly known in parts of
+# the world as Pascal's Triangle (it was also previously studied by many Indian,
+# Chinese, and Persian mathematicians, and is known by different names in other
+# parts of the world).
+
+# The pattern is shown below:
+
+#                    1
+#                   1 1
+#                  1 2 1
+#                 1 3 3 1
+#                1 4 6 4 1
+#                   ...
+
+# Each number is the sum of the number above it to the left and the number above
+# it to the right (any missing numbers are counted as 0).
+
+# Define a procedure, triangle(n), that takes a number n as its input, and
+# returns a list of the first n rows in the triangle. Each element of the
+# returned list should be a list of the numbers at the corresponding row in the
+# triangle.
+
+def make_next_row(row):
+    result =[]
+    prev = 0
+    for e in row:
+          result.append(e+prev)
+          prev = e
+    result.append(prev)
+    return result
+
+def triangle(n):
+    result = []
+    current = [1]
+    for unused in range(0,n):
+         result.append(current)
+         current = make_next_row(current)
+    return result
+
+
+
+def quicksort_pages(pages, ranks):
+    if not pages or len(pages) <=1:
+         return pages
+    else:
+        pivot = ranks[pages[0]] # find pivot
+        worse = []
+        better = []
+        for page in pages[1:]:
+              if ranks[page] <= pivot:
+                       worse.append(page)
+              else:
+                       better.append(page)
+        return quicksort_pages(better,ranks) + [pages[0]] + quicksort_pages(worse, ranks)
+
+def ordered_search(index, ranks, keyword):
+    pages = lookup(index, keyword)
+    return quicksort_pages(pages, ranks)
+
+
+
+cache = {
+   'http://udacity.com/cs101x/urank/index.html': """<html>
+<body>
+<h1>Dave's Cooking Algorithms</h1>
+<p>
+Here are my favorite recipies:
+<ul>
+<li> <a href="http://udacity.com/cs101x/urank/hummus.html">Hummus Recipe</a>
+<li> <a href="http://udacity.com/cs101x/urank/arsenic.html">World's Best Hummus</a>
+<li> <a href="http://udacity.com/cs101x/urank/kathleen.html">Kathleen's Hummus Recipe</a>
+</ul>
+
+For more expert opinions, check out the
+<a href="http://udacity.com/cs101x/urank/nickel.html">Nickel Chef</a>
+and <a href="http://udacity.com/cs101x/urank/zinc.html">Zinc Chef</a>.
+</body>
+</html>
+
+
+
+
+
+
+""",
+   'http://udacity.com/cs101x/urank/zinc.html': """<html>
+<body>
+<h1>The Zinc Chef</h1>
+<p>
+I learned everything I know from
+<a href="http://udacity.com/cs101x/urank/nickel.html">the Nickel Chef</a>.
+</p>
+<p>
+For great hummus, try
+<a href="http://udacity.com/cs101x/urank/arsenic.html">this recipe</a>.
+
+</body>
+</html>
+
+
+
+
+
+
+""",
+   'http://udacity.com/cs101x/urank/nickel.html': """<html>
+<body>
+<h1>The Nickel Chef</h1>
+<p>
+This is the
+<a href="http://udacity.com/cs101x/urank/kathleen.html">
+best Hummus recipe!
+</a>
+
+</body>
+</html>
+
+
+
+
+
+
+""",
+   'http://udacity.com/cs101x/urank/kathleen.html': """<html>
+<body>
+<h1>
+Kathleen's Hummus Recipe
+</h1>
+<p>
+
+<ol>
+<li> Open a can of garbonzo beans.
+<li> Crush them in a blender.
+<li> Add 3 tablesppons of tahini sauce.
+<li> Squeeze in one lemon.
+<li> Add salt, pepper, and buttercream frosting to taste.
+</ol>
+
+</body>
+</html>
+
+""",
+   'http://udacity.com/cs101x/urank/arsenic.html': """<html>
+<body>
+<h1>
+The Arsenic Chef's World Famous Hummus Recipe
+</h1>
+<p>
+
+<ol>
+<li> Kidnap the <a href="http://udacity.com/cs101x/urank/nickel.html">Nickel Chef</a>.
+<li> Force her to make hummus for you.
+</ol>
+
+</body>
+</html>
+
+""",
+   'http://udacity.com/cs101x/urank/hummus.html': """<html>
+<body>
+<h1>
+Hummus Recipe
+</h1>
+<p>
+
+<ol>
+<li> Go to the store and buy a container of hummus.
+<li> Open it.
+</ol>
+
+</body>
+</html>
+
+
+
+
+""",
+}
+
+def get_page(url):
+    if url in cache:
+        return cache[url]
+    return ""
+
+
+def get_next_target(page):
+    start_link = page.find('<a href=')
+    if start_link == -1:
+        return None, 0
+    start_quote = page.find('"', start_link)
+    end_quote = page.find('"', start_quote + 1)
+    url = page[start_quote + 1:end_quote]
+    return url, end_quote
+
+def get_all_links(page):
+    links = []
+    while True:
+        url, endpos = get_next_target(page)
+        if url:
+            links.append(url)
+            page = page[endpos:]
+        else:
+            break
+    return links
+
+
+def union(a, b):
+    for e in b:
+        if e not in a:
+            a.append(e)
+
+def add_page_to_index(index, url, content):
+    words = content.split()
+    for word in words:
+        add_to_index(index, word, url)
+
+def add_to_index(index, keyword, url):
+    if keyword in index:
+        index[keyword].append(url)
+    else:
+        index[keyword] = [url]
+
+def lookup(index, keyword):
+    if keyword in index:
+        return index[keyword]
+    else:
+        return None
+
+def crawl_web(seed): # returns index, graph of inlinks
+    tocrawl = [seed]
+    crawled = []
+    graph = {}  # <url>, [list of pages it links to]
+    index = {}
+    while tocrawl:
+        page = tocrawl.pop()
+        if page not in crawled:
+            content = get_page(page)
+            add_page_to_index(index, page, content)
+            outlinks = get_all_links(content)
+            graph[page] = outlinks
+            union(tocrawl, outlinks)
+            crawled.append(page)
+    return index, graph
+
+def compute_ranks(graph):
+    d = 0.8 # damping factor
+    numloops = 10
+
+    ranks = {}
+    npages = len(graph)
+    for page in graph:
+        ranks[page] = 1.0 / npages
+
+    for i in range(0, numloops):
+        newranks = {}
+        for page in graph:
+            newrank = (1 - d) / npages
+            for node in graph:
+                if page in graph[node]:
+                    newrank = newrank + d * (ranks[node] / len(graph[node]))
+            newranks[page] = newrank
+        ranks = newranks
+    return ranks
+
+
+
+
+import webbrowser
+webbrowser.open("http://www.seahusa.com")
+
+import time
+time.sleep(3600)# wait for 3600 seconds - 1 hour
+
+
+
+import time
+import webbrowser
+
+total_breaks = 3
+break_count = 0
+
+while (break_count < total_breaks):
+    time.sleep (10)
+    webbrowser.open("http://www.seahusa.com")
+    break_count +=1
+
+
+
+import time
+import webbrowser
+
+for i in range(0, 3):
+    time.sleep (10)
+    webbrowser.open("http://www.seahusa.com")
+    break_count +=1
+
+
+
+import time
+import webbrowser
+
+total_breaks = 3
+break_count = 0
+
+print ("This program started on "+time.ctime())
+while (break_count < total_breaks):
+    time.sleep (2*60*60)
+    webbrowser.open("http://www.seahusa.com")
+    break_count +=1
+print ("Program ended on "+time.ctime())
+
+
+
+
+import os
+def rename_files():
+    # Get file names from a folder
+    file_list = os.listdir(r"/Users/admin/Files/고진텍기나파이루/IT/_Study/Study_Python/Udacity/prank")
+    # Print (file_list)
+    saved_path = os.getcwd()
+    print ("Current working directory is "+saved_path)
+    os.chdir(r"/Users/admin/Files/고진텍기나파이루/IT/_Study/Study_Python/Udacity/prank")
+    
+    # for each file, rename filename
+    for file_name in file_list:
+        print("Old Name - "+file_name)
+        print("New Name - "+file_name.translate(None, "1234567890"))
+        os.rename(file_name, file_name.translate(None, "1234567890"))
+    os.chdir(saved_path)
+                  
+rename_files()
+
+# the translate does not work and produce error. Fix.
+
+
+
+
+
+import turtle
+
+def draw_square():
+	# Generate a window to draw onto
+	window = turtle.Screen()
+	window.bgcolor("red")
+
+	# Run a turtle -drawing- program
+	brad = turtle.Turtle()
+	brad.forward(100)
+
+	window.exitonclick() # exit the program on a mouse click
+
+draw_square()
+
+
+
+
+import turtle
+
+def draw_square():
+    window = turtle.Screen()
+    window.bgcolor("red")
+
+    brad=turtle.Turtle() # inside the turtle module in library is a class called turtle.
+    brad.shape("circle")
+    brad.color("yellow")
+    brad.speed(2)
+    
+    for e in range(0, 4):
+        brad.forward(100)
+        brad.right(90)
+    window.exitonclick()
+
+draw_square()
+-----------------------------------
+import turtle
+
+def draw_square():
+    window = turtle.Screen()
+    window.bgcolor("red")
+
+    brad=turtle.Turtle()
+    brad.shape("circle")
+    brad.color("yellow")
+    brad.speed(2)
+    
+    for e in range(0, 4):
+        brad.forward(100)
+        brad.right(90)
+
+    angie = turtle.Turtle()
+    angie.shape("circle")
+    angie.color("blue")
+    angie.circle(100)
+    
+    window.exitonclick()
+ 
+draw_square()
+
+
+
+
+
+
+import turtle
+
+def draw_square(some_turtle):
+    for i in range(1,5):
+        some_turtle.forward(100)
+        some_turtle.right(90)
+
+def draw_art():
+    window= turtle.Screen()
+    window.bgcolor("red")
+    # Create the turtle Brad - draw a square
+    brad = turtle.Turtle()
+    brad.shape("turtle")
+    brad.color("yellow")
+    brad.speed(2)
+    draw_square(brad)
+    #Create the turtle Angie - draw a circle
+    angie = turtle.Turtle()
+    angie.shape("arrow")
+    angie.color("blue")
+    angie.circle(100)
+
+    window.exitonclick()
+
+draw_art()
