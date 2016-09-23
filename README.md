@@ -1,2 +1,2 @@
 # Python
-This project is to learn Python with the help of my mentors.
+This is a collection of codes for the people who are starting to learn Python.
